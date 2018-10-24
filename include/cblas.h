@@ -12,12 +12,19 @@
 #include "common.h"
 
 //cblas dgemm api
-void cblas_dgemm(const CBLAS_LAYOUT layout, const CBLAS_TRANSPOSE transa,
+void hpl_dgemm(const CBLAS_LAYOUT layout, const CBLAS_TRANSPOSE transa,
                  const CBLAS_TRANSPOSE transb, const HPL_INT m, const
                  HPL_INT n, const HPL_INT k, const double alpha, const
                  double *a, const HPL_INT lda, const double *b, const
                  HPL_INT ldb, const double beta, double *c, const HPL_INT ldc);
 
+void hpl_dgemm_backend(HPL_INT m, HPL_INT n, HPL_INT k, double alpha,
+    const double *a, HPL_INT lda, const double *b, HPL_INT ldb, 
+    double beta, double *c, HPL_INT ldc);
+
+void hpl_dgemm_kernel_d8x6(HPL_INT M, HPL_INT N, HPL_INT K,
+    double alpha, double *a, HPL_INT lda, double *b, HPL_INT ldb, 
+    double beta, double *c, HPL_INT ldc);
 //naive dgemm
 void cblas_dgemm_naive(const CBLAS_LAYOUT layout, const CBLAS_TRANSPOSE transa,
                  const CBLAS_TRANSPOSE transb, const HPL_INT m, const
