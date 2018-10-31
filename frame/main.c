@@ -1,7 +1,13 @@
-#include "cblas.h"
+#include "hpl_blas.h"
+#include <blis/cblas.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <dlfcn.h>
 
+typedef void(*dgemm_type)(enum CBLAS_ORDER, enum CBLAS_TRANSPOSE,
+                          enum CBLAS_TRANSPOSE, int, int,
+                          int, double, const double *,
+                          int, const double *, int,                                                    double, double *, int);
 struct timeval UTIL_CPU_TIME_start, UTIL_CPU_TIME_end;
 void UTIL_CPU_TIME_tic(){
     gettimeofday(&UTIL_CPU_TIME_start, NULL);
@@ -14,6 +20,13 @@ double UTIL_CPU_TIME_toc(){
 }
 
 int main() {
+  void *blas_handle = NULL;
+  blas_handle = dlopen("/home/scy/software/hygon/lib/libblis.so", RTLD_LAZY);
+  if(!blas_handle) {
+    printf("no blaslib found in the destination dir\n");
+    return 1;
+  }
+  dgemm_type dgemm_ptr = (dgemm_type)dlsym(blas_handle, "cblas_dgemm");
   double *a, *b, *c;
   double alpha = 1.0;
   double beta = 1.0;
@@ -33,21 +46,36 @@ int main() {
   //    *(b + i * m + j) = i + j;
   //  }
   //}
-  //cblas_dgemm_naive(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
+  //cblas_dgemm_naive(HblasColMajor, HblasNoTrans, HblasNoTrans, m, n, k,
   //    alpha, a, m, b, k, beta, c, m);
-  hpl_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
-      alpha, a, m, b, k, beta, c, m);
+  //hpl_dgemm(HblasColMajor, HblasNoTrans, HblasNoTrans, m, n, k,
+  //    alpha, a, m, b, k, beta, c, m);
 
   double time_cost = 0.0;
+  double flops = m * n * k * 2 * 1e-9;
+
+  dgemm_ptr(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
+      alpha, a, m, b, k, beta, c, m);
   for(int i = 0; i < REPEATED; i++) {
     UTIL_CPU_TIME_tic();
-    hpl_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
+    dgemm_ptr(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k,
         alpha, a, m, b, k, beta, c, m);
     time_cost += UTIL_CPU_TIME_toc();
   }
   printf("time: %lfs\n", time_cost / REPEATED);
-  double flops = m * n * k * 2 * 1e-9;
-  printf("flop/s %lf\n", flops / (time_cost / REPEATED) );
+  printf("hygon flop/s %lf\n", flops / (time_cost / REPEATED) );
+
+  hpl_dgemm(HblasColMajor, HblasNoTrans, HblasNoTrans, m, n, k,
+      alpha, a, m, b, k, beta, c, m);
+  time_cost = 0.0;
+  for(int i = 0; i < REPEATED; i++) {
+    UTIL_CPU_TIME_tic();
+    hpl_dgemm(HblasColMajor, HblasNoTrans, HblasNoTrans, m, n, k,
+        alpha, a, m, b, k, beta, c, m);
+    time_cost += UTIL_CPU_TIME_toc();
+  }
+  printf("time: %lfs\n", time_cost / REPEATED);
+  printf("hpl flop/s %lf\n", flops / (time_cost / REPEATED) );
   
   printf("Succeed\n");
 

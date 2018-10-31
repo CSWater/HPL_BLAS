@@ -12,8 +12,8 @@
 #ifndef __TYPES_H__
 #include <stdint.h>
 typedef uint64_t HPL_INT;
-typedef enum {CblasRowMajor = 1, CblasColMajor = 2} CBLAS_LAYOUT;
-typedef enum {CblasNoTrans = 3, CblasTrans = 4} CBLAS_TRANSPOSE;  //now, no need for CblasConjTrans
+typedef enum {HblasRowMajor = 1, HblasColMajor = 2} HBLAS_LAYOUT;
+typedef enum {HblasNoTrans = 3, HblasTrans = 4} HBLAS_TRANSPOSE;  //now, no need for CblasConjTrans
 
 
 #endif

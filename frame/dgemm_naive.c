@@ -8,19 +8,19 @@
  *           email: shuichaoyang@ncic.ac.cn
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "cblas.h"
+#include "hpl_blas.h"
 
 #define Iter(ptr, i, j, ldx) *(ptr + (i) * ldx + j)
-void cblas_dgemm_naive(const CBLAS_LAYOUT layout, const CBLAS_TRANSPOSE 
-    transa, const CBLAS_TRANSPOSE transb, const HPL_INT M, const HPL_INT
+void cblas_dgemm_naive(const HBLAS_LAYOUT layout, const HBLAS_TRANSPOSE 
+    transa, const HBLAS_TRANSPOSE transb, const HPL_INT M, const HPL_INT
     N, const HPL_INT K, const double alpha, const double *a, const HPL_INT
     lda, const double *b, const HPL_INT ldb, const double beta, double *c,
     const HPL_INT ldc) {
-  if(layout != CblasColMajor) {
-    printf("Only support CblasColMajor\n");
+  if(layout != HblasColMajor) {
+    printf("Only support HblasColMajor\n");
     return;
   }
-  if(transa != CblasNoTrans && transb != CblasNoTrans) {
+  if(transa != HblasNoTrans && transb != HblasNoTrans) {
     printf("Only support NN\n");
     return;
   }

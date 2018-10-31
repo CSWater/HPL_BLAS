@@ -8,7 +8,7 @@
  *           email: shuichaoyang@ncic.ac.cn
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include "cblas.h"
+#include "hpl_blas.h"
 #include <omp.h>
 
 void hpl_dgemm_backend(HPL_INT m, HPL_INT n, HPL_INT k, double alpha,

@@ -7,17 +7,17 @@
  *           By Chaoyang Shui from NCIC
  *           email: shuichaoyang@ncic.ac.cn
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-#include "cblas.h"
-void hpl_dgemm(const CBLAS_LAYOUT layout, const CBLAS_TRANSPOSE transa,
-                 const CBLAS_TRANSPOSE transb, const HPL_INT m, const
+#include "hpl_blas.h"
+void hpl_dgemm(const HBLAS_LAYOUT layout, const HBLAS_TRANSPOSE transa,
+                 const HBLAS_TRANSPOSE transb, const HPL_INT m, const
                  HPL_INT n, const HPL_INT k, const double alpha, const
                  double *a, const HPL_INT lda, const double *b, const
                  HPL_INT ldb, const double beta, double *c, const HPL_INT ldc) {
-  if(layout != CblasColMajor) {
+  if(layout != HblasColMajor) {
     printf("only support col major store\n");
     return;
   }
-  if(transa != CblasNoTrans || transb != CblasNoTrans) {
+  if(transa != HblasNoTrans || transb != HblasNoTrans) {
     printf("only support NN\n");
     return;
   }
